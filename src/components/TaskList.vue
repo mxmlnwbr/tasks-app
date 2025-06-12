@@ -12,7 +12,7 @@ const emits = defineEmits<{
 </script>
 
 <template>
-  <div class="task-list">
+  <TransitionGroup name="task-list" tag="div" class="task-list">
     <article v-for="task in props.tasks" class="task" :key="task.id">
       <label>
         <input
@@ -26,7 +26,7 @@ const emits = defineEmits<{
         Remove
       </button>
     </article>
-  </div>
+  </TransitionGroup>
 </template>
 
 <style>
@@ -42,5 +42,15 @@ const emits = defineEmits<{
 
 .done {
   text-decoration: line-through;
+}
+
+.task-list-enter-active,
+.task-list-leave-active {
+  transition: all 0.5s ease;
+}
+.task-list-enter-from,
+.task-list-leave-to {
+  opacity: 0;
+  transform: translateX(300px);
 }
 </style>
