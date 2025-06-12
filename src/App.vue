@@ -2,14 +2,28 @@
 import { computed, ref } from "vue";
 import TaskForm from "./components/TaskForm.vue";
 import TaskList from "./components/TaskList.vue";
-import type { Task } from "./types";
+import type { Task, TaskFilter } from "./types";
+import FilterButton from "./components/FilterButton.vue";
 
 const message = ref("Tasks App");
 const tasks = ref<Task[]>([]);
+const filter = ref<TaskFilter>("all");
 
 const totalDone = computed(() =>
   tasks.value.reduce((total, task) => (task.done ? total + 1 : total), 0)
 );
+
+const filteredTasks = computed(() => {
+  switch (filter.value) {
+    case "all":
+      return tasks.value;
+    case "done":
+      return tasks.value.filter((task) => task.done);
+    case "todo":
+      return tasks.value.filter((task) => !task.done);
+  }
+  return tasks.value;
+});
 
 function addTask(newTask: string) {
   tasks.value.push({
@@ -32,6 +46,10 @@ function removeTask(id: string) {
     tasks.value.splice(index, 1);
   }
 }
+
+function setFilter(value: TaskFilter) {
+  filter.value = value;
+}
 </script>
 
 <template>
@@ -40,7 +58,16 @@ function removeTask(id: string) {
     <TaskForm @add-task="addTask" />
     <h3 v-if="!tasks.length">Add a task to get started.</h3>
     <h3 v-else>{{ totalDone }} / {{ tasks.length }} tasks completed</h3>
-    <TaskList :tasks @toggle-done="toggleDone" @remove-task="removeTask" />
+    <div v-if="tasks.length" class="button-container">
+      <FilterButton filter="all" @set-filter="setFilter" />
+      <FilterButton filter="todo" @set-filter="setFilter" />
+      <FilterButton filter="done" @set-filter="setFilter" />
+    </div>
+    <TaskList
+      :tasks="filteredTasks"
+      @toggle-done="toggleDone"
+      @remove-task="removeTask"
+    />
   </main>
 </template>
 
@@ -53,5 +80,6 @@ main {
 .button-container {
   display: flex;
   justify-content: end;
+  gap: 0.5rem;
 }
 </style>
