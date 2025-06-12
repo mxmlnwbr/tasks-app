@@ -19,7 +19,7 @@ const emits = defineEmits<{
           :checked="task.done"
           type="checkbox"
         />
-        {{ task.title }}
+        <span :class="{ done: task.done }">{{ task.title }}</span>
       </label>
     </article>
   </div>
@@ -28,5 +28,9 @@ const emits = defineEmits<{
 <style>
 .task-list {
   margin-top: 1rem;
+}
+
+.done {
+  text-decoration: line-through;
 }
 </style>
